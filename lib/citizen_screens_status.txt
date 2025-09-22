@@ -1,0 +1,46 @@
+Citizen App Screens Status
+=========================
+
+Present Screens:
+----------------
+- account_settings_screen.dart
+- community_forum_screen.dart
+- forum_post_screen.dart
+- help_support_screen.dart
+- watch_group_details_screen.dart
+- my_watch_groups_screen.dart
+- dashboard_screen.dart
+- profile_screen.dart
+- profile_edit_screen.dart
+- onboarding_screen_1.dart
+- onboarding_screen_2.dart
+- onboarding_screen_3.dart
+- onboarding_screen_4.dart
+- notifications_screen.dart
+- group_chat_screen.dart
+- messages_screen.dart
+- emergency_mode_screen.dart
+- my_reports_screen.dart
+- report_details_screen.dart
+- welcome_screen.dart
+- check_email_screen.dart
+- review_report_screen.dart
+- location_screen.dart
+- report_success_screen.dart
+- report_crime_screen.dart
+- emergency_contact_screen.dart
+- privacy_data_screen.dart
+- location_services_screen.dart
+- forgot_password_screen.dart
+- signup_screen.dart
+- login_screen.dart
+
+Missing Screens (Citizen Side):
+------------------------------
+- Report Status Tracking (screen to track the status of submitted reports)
+- Media Gallery for Reports (gallery to view all submitted media)
+- Feedback/Rating System (way for users to rate/report the platform or police response)
+- Multi-language Support UI (language selection screen or modal)
+- Accessibility Settings (screen for accessibility options)
+- Tutorial/FAQ (dedicated tutorial or FAQ screen, unless included in help_support_screen.dart)
+- Incident Map View (map view of all reported incidents for citizens)
