@@ -41,7 +41,7 @@ class _LocationScreenState extends State<LocationScreen> {
     // });
   }
 
-  Future<void> _saveLocationData() async {
+  Future<Map<String, dynamic>> _saveLocationData() async {
     // Prepare location data for backend
     final locationData = {
       'detectedLocation': detectedLocation,
@@ -64,7 +64,7 @@ class _LocationScreenState extends State<LocationScreen> {
       ...locationData,
     };
 
-   // return completeReportData;
+    return completeReportData;
   }
 
   Future<void> _handleReviewSubmit() async {
