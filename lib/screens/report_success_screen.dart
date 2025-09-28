@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dashboard_screen.dart';
+import 'report_details_screen.dart';
 
 class ReportSuccessScreen extends StatelessWidget {
   final String reportId;
@@ -14,39 +16,41 @@ class ReportSuccessScreen extends StatelessWidget {
       backgroundColor: const Color(0xFF36599F),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.all(24.0),
+          padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 40),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              const Spacer(),
+
               // Success Icon
               Container(
-                width: 100,
-                height: 100,
+                width: 120,
+                height: 120,
                 decoration: const BoxDecoration(
-                  color: Color(0xFF4CAF50),
+                  color: Color(0xFF10B981),
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(
                   Icons.check,
                   color: Colors.white,
-                  size: 50,
+                  size: 60,
                 ),
               ),
 
-              const SizedBox(height: 40),
+              const SizedBox(height: 50),
 
               // Title
               const Text(
                 'Report Submitted!',
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
+                  fontSize: 32,
+                  fontWeight: FontWeight.w700,
                 ),
                 textAlign: TextAlign.center,
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 25),
 
               // Subtitle
               const Text(
@@ -54,20 +58,21 @@ class ReportSuccessScreen extends StatelessWidget {
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 16,
-                  height: 1.5,
+                  height: 1.6,
+                  fontWeight: FontWeight.w400,
                 ),
                 textAlign: TextAlign.center,
               ),
 
-              const SizedBox(height: 40),
+              const SizedBox(height: 50),
 
               // Report ID Card
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(25),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(15),
                 ),
                 child: Column(
                   children: [
@@ -75,8 +80,8 @@ class ReportSuccessScreen extends StatelessWidget {
                       'Report ID: $reportId',
                       style: const TextStyle(
                         color: Color(0xFF36599F),
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
                     const SizedBox(height: 8),
@@ -85,25 +90,49 @@ class ReportSuccessScreen extends StatelessWidget {
                       style: TextStyle(
                         color: Colors.grey,
                         fontSize: 14,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
                 ),
               ),
 
-              const SizedBox(height: 40),
+              const SizedBox(height: 50),
 
               // View My Reports Button
-              TextButton(
-                onPressed: () {
-                  // Navigate to reports history
-                },
-                child: const Text(
-                  'View My Reports',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    decoration: TextDecoration.underline,
+              SizedBox(
+                width: double.infinity,
+                height: 50,
+                child: OutlinedButton(
+                  onPressed: () {
+                    // Navigate to report details with the current report ID
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ReportDetailsScreen(
+                          reportId: reportId,
+                          reportData: {
+                            'id': reportId,
+                            'status': 'submitted',
+                            'submittedAt': DateTime.now().toIso8601String(),
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: Colors.white,
+                    side: const BorderSide(color: Colors.white, width: 1.5),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: const Text(
+                    'View My Reports',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
@@ -113,17 +142,24 @@ class ReportSuccessScreen extends StatelessWidget {
               // Return to Home Button
               SizedBox(
                 width: double.infinity,
+                height: 50,
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.of(context).popUntil((route) => route.isFirst);
+                    Navigator.pushAndRemoveUntil(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const DashboardScreen(),
+                      ),
+                          (route) => false,
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.white,
                     foregroundColor: const Color(0xFF36599F),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(12),
                     ),
+                    elevation: 0,
                   ),
                   child: const Text(
                     'Return to Home',
@@ -135,7 +171,7 @@ class ReportSuccessScreen extends StatelessWidget {
                 ),
               ),
 
-              const SizedBox(height: 16),
+              const SizedBox(height: 30),
 
               // Response time
               const Text(
@@ -143,9 +179,12 @@ class ReportSuccessScreen extends StatelessWidget {
                 style: TextStyle(
                   color: Colors.white70,
                   fontSize: 14,
+                  fontWeight: FontWeight.w400,
                 ),
                 textAlign: TextAlign.center,
               ),
+
+              const Spacer(),
             ],
           ),
         ),
