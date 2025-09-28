@@ -110,12 +110,12 @@ class ReportSuccessScreen extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) => ReportDetailsScreen(
-                          reportId: reportId,
-                          reportData: {
-                            'id': reportId,
-                            'status': 'submitted',
-                            'submittedAt': DateTime.now().toIso8601String(),
-                          },
+                         // reportId: reportId,
+                         // reportData: {
+                          //  'id': reportId,
+                          //  'status': 'submitted',
+                           // 'submittedAt': DateTime.now().toIso8601String(),
+                          //},
                         ),
                       ),
                     );
