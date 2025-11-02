@@ -39,6 +39,15 @@ import 'screens/tutorial_faq_screen.dart';
 import 'screens/incident_map_view_screen.dart';
 import 'screens/create_post_screen.dart';
 
+// NEW SCREENS - Add these imports
+import 'screens/media_capture_screen.dart';
+import 'screens/community_statistics_screen.dart';
+import 'screens/my_impact_screen.dart';
+import 'screens/nearby_incidents_screen.dart';
+import 'screens/safety_education_screen.dart';
+import 'screens/offline_reports_queue_screen.dart';
+import 'screens/anonymous_reporting_info_screen.dart';
+
 class SafeReportApp extends StatelessWidget {
   const SafeReportApp({super.key});
 
@@ -46,118 +55,94 @@ class SafeReportApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'SafeReport',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        primaryColor: const Color(0xFF36599F),
         fontFamily: 'Roboto',
         useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF36599F),
+          primary: const Color(0xFF36599F),
+        ),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF36599F),
+          foregroundColor: Colors.white,
+          elevation: 0,
+          centerTitle: false,
+        ),
+        elevatedButtonTheme: ElevatedButtonThemeData(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF36599F),
+            foregroundColor: Colors.white,
+            elevation: 0,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: const BorderSide(color: Color(0xFF36599F), width: 2),
+          ),
+        ),
       ),
-      home: const OnboardingFlow(),
+      // Start with Welcome Screen instead of OnboardingFlow
+      home: const WelcomeScreen(),
+
+      // Define named routes for better navigation management
+      routes: {
+        '/welcome': (context) => const WelcomeScreen(),
+        '/onboarding1': (context) => const OnboardingScreen1(),
+        '/onboarding2': (context) => const OnboardingScreen2(),
+        '/onboarding3': (context) => const OnboardingScreen3(),
+        '/onboarding4': (context) => const OnboardingScreen4(),
+        '/login': (context) => const LoginScreen(),
+        '/signup': (context) => const SignupScreen(),
+        '/forgot-password': (context) => const ForgotPasswordScreen(),
+        '/check-email': (context) => const CheckEmailScreen(),
+        '/notifications': (context) => const NotificationsScreen(),
+        '/location-services': (context) => const LocationServicesScreen(),
+        '/privacy-data': (context) => const PrivacyDataScreen(),
+        '/dashboard': (context) => const DashboardScreen(),
+
+        // Main App Screens
+        '/report-crime': (context) => const ReportCrimeScreen(),
+        '/my-reports': (context) => const MyReportsScreen(),
+        '/messages': (context) => const MessagesScreen(),
+        '/profile': (context) => const ProfileScreen(),
+
+        // Settings & Profile
+        '/account-settings': (context) => const AccountSettingsScreen(),
+        '/profile-edit': (context) => const ProfileEditScreen(),
+        '/accessibility': (context) => const AccessibilitySettingsScreen(),
+        '/multi-language': (context) => const MultiLanguageScreen(),
+
+        // Community Features
+        '/community-forum': (context) => const CommunityForumScreen(),
+        '/my-watch-groups': (context) => const MyWatchGroupsScreen(),
+
+        // Support & Help
+        '/help-support': (context) => const HelpSupportScreen(),
+        '/tutorial-faq': (context) => const TutorialFaqScreen(),
+        '/feedback-rating': (context) => const FeedbackRatingScreen(),
+
+        // Emergency
+        '/emergency-mode': (context) => const EmergencyModeScreen(),
+        '/emergency-contact': (context) => const EmergencyContactScreen(),
+
+        // NEW SCREENS
+        '/community-statistics': (context) => const CommunityStatisticsScreen(),
+        '/my-impact': (context) => const MyImpactScreen(),
+        '/nearby-incidents': (context) => const NearbyIncidentsScreen(),
+        '/safety-education': (context) => const SafetyEducationScreen(),
+        '/offline-queue': (context) => const OfflineReportsQueueScreen(),
+        '/anonymous-info': (context) => const AnonymousReportingInfoScreen(),
+      },
     );
   }
 }
-
-class OnboardingFlow extends StatefulWidget {
-  const OnboardingFlow({super.key});
-
-  @override
-  State<OnboardingFlow> createState() => _OnboardingFlowState();
-}
-
-class _OnboardingFlowState extends State<OnboardingFlow> {
-  final PageController _pageController = PageController();
-  int _currentPage = 0;
-
-  final List<Widget> _screens = [
-    const WelcomeScreen(),
-    const OnboardingScreen1(),
-    const OnboardingScreen2(),
-    const OnboardingScreen3(),
-    const OnboardingScreen4(),
-    const LoginScreen(),
-    const SignupScreen(),
-    const PrivacyDataScreen(),
-    const ForgotPasswordScreen(),
-    const CheckEmailScreen(),
-    const LocationServicesScreen(),
-    const NotificationsScreen(),
-    const DashboardScreen(),
-    const EmergencyContactScreen(),
-    const ReportCrimeScreen(),
-    const MyReportsScreen(),
-    const ReportDetailsScreen(),
-    const MessagesScreen(),
-    const EmergencyModeScreen(),
-    const MyWatchGroupsScreen(),
-    const WatchGroupDetailsScreen(),
-    const GroupChatScreen(),
-    const ProfileEditScreen(),
-    const ProfileScreen(),
-    const ReportSuccessScreen(reportId: '',),
-    const LocationScreen(),
-    const ReviewReportScreen(reportData: {},),
-    const AccountSettingsScreen(),
-    const HelpSupportScreen(),
-    const CommunityForumScreen(),
-    const ForumPostScreen(),
-    const ReportStatusTrackingScreen(),
-    const MediaGalleryScreen(),
-    const FeedbackRatingScreen(),
-    const MultiLanguageScreen(),
-    const AccessibilitySettingsScreen(),
-    const TutorialFaqScreen(),
-    const IncidentMapViewScreen(),
-    const CreatePostScreen(),
-
-
-  ];
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  void _nextPage() {
-    if (_currentPage < _screens.length - 1) {
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 300),
-        curve: Curves.easeInOut,
-      );
-      setState(() {
-        _currentPage++;
-      });
-    } else {
-      // Navigate to main app
-      _navigateToMainApp();
-    }
-  }
-
-  void _skipTutorial() {
-    _navigateToMainApp();
-  }
-
-  void _navigateToMainApp() {
-    // TODO: Navigate to main app screen
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Welcome to SafeReport!'),
-        duration: Duration(seconds: 2),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: PageView(
-        controller: _pageController,
-        onPageChanged: (index) {
-          setState(() {
-            _currentPage = index;
-          });
-        },
-        children: _screens,
-      ),
-    );
-  }
-} 

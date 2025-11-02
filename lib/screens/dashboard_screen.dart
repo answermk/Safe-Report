@@ -5,6 +5,10 @@ import 'my_watch_groups_screen.dart';
 import 'my_reports_screen.dart';
 import 'messages_screen.dart';
 import 'profile_screen.dart';
+import 'community_statistics_screen.dart'; // NEW
+import 'my_impact_screen.dart'; // NEW
+import 'nearby_incidents_screen.dart'; // NEW
+import 'safety_education_screen.dart'; // NEW
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -17,11 +21,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
   int _selectedIndex = 0;
 
   // These will be populated from backend
-  String userName = "Answer"; // TODO: Get from backend/database
-  String thisWeekReports = "12 reports"; // TODO: Get from backend
-  String avgResponse = "8 minutes"; // TODO: Get from backend
-  String safetyLevel = "Good"; // TODO: Get from backend
-  String watchGroupInfo = "Oak Street Watch • 2 new alerts"; // TODO: Get from backend
+  String userName = "Answer";
+  String thisWeekReports = "12 reports";
+  String avgResponse = "8 minutes";
+  String safetyLevel = "Good";
+  String watchGroupInfo = "Oak Street Watch • 2 new alerts";
+  int nearbyIncidentsCount = 5; // NEW
 
   @override
   void initState() {
@@ -30,22 +35,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Future<void> _loadUserData() async {
-    // TODO: Implement backend calls to load user data
-    // This is where you would call your backend APIs
     print('Loading user data from backend...');
-
-    // Simulate API calls
-    // final userData = await UserService.getCurrentUser();
-    // final communityStatus = await CommunityService.getStatus();
-    // final watchGroups = await WatchGroupService.getUserGroups();
-
-    // setState(() {
-    //   userName = userData.name;
-    //   thisWeekReports = communityStatus.weeklyReports;
-    //   avgResponse = communityStatus.avgResponse;
-    //   safetyLevel = communityStatus.safetyLevel;
-    //   watchGroupInfo = watchGroups.primaryGroup;
-    // });
+    // TODO: Implement backend calls
   }
 
   @override
@@ -55,11 +46,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            // Main content
-            Expanded(
-              child: _buildMainContent(),
-            ),
-            // Bottom navigation
+            Expanded(child: _buildMainContent()),
             _buildBottomNavigation(),
           ],
         ),
@@ -71,19 +58,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
     return SingleChildScrollView(
       child: Column(
         children: [
-          // Header with curved background
           _buildHeader(),
-
-          // Community Status Card
-          _buildCommunityStatusCard(),
-
-          // Quick Actions
-          _buildQuickActions(),
-
-          // Watch Groups
+          _buildCommunityStatusCard(), // Tappable now
+          _buildQuickActions(), // Added My Impact
+          _buildNearbyIncidentsCard(), // NEW
           _buildWatchGroups(),
-
-          const SizedBox(height: 100), // Extra space for bottom nav
+          _buildSafetyEducationCard(), // NEW
+          const SizedBox(height: 100),
         ],
       ),
     );
@@ -96,15 +77,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [
-            Color(0xFF36599F),
-            Color(0xFF5D80C1),
-          ],
+          colors: [Color(0xFF36599F), Color(0xFF5D80C1)],
         ),
       ),
       child: Stack(
         children: [
-          // Curved wave at bottom
           Positioned(
             bottom: 0,
             left: 0,
@@ -120,8 +97,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ),
           ),
-
-          // Title
           const Positioned(
             top: 30,
             left: 0,
@@ -137,8 +112,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ),
           ),
-
-          // Profile Card
           Positioned(
             top: 100,
             left: 30,
@@ -166,31 +139,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
       child: Column(
         children: [
-          // Avatar
           Container(
             width: 80,
             height: 80,
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               gradient: LinearGradient(
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFFFFD700),
-                  Color(0xFFFFE55C),
-                ],
+                colors: [Color(0xFFFFD700), Color(0xFFFFE55C)],
               ),
               shape: BoxShape.circle,
             ),
-            child: const Icon(
-              Icons.person,
-              size: 40,
-              color: Colors.white,
-            ),
+            child: const Icon(Icons.person, size: 40, color: Colors.white),
           ),
-
           const SizedBox(height: 15),
-
-          // Greeting - populated from backend
           Text(
             'Good Morning, $userName',
             style: TextStyle(
@@ -199,10 +161,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               fontWeight: FontWeight.w500,
             ),
           ),
-
           const SizedBox(height: 20),
-
-          // Report Button
           SizedBox(
             width: double.infinity,
             height: 45,
@@ -225,10 +184,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
               child: const Text(
                 'Report Now',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
               ),
             ),
           ),
@@ -237,42 +193,83 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  // ENHANCED - Now tappable to navigate to CommunityStatisticsScreen
   Widget _buildCommunityStatusCard() {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(30, 20, 30, 0),
-      padding: const EdgeInsets.all(25),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.08),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const CommunityStatisticsScreen(),
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Community Status',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.w700,
-              color: Color(0xFF36599F),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.fromLTRB(30, 20, 30, 0),
+        padding: const EdgeInsets.all(25),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.08),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
             ),
-          ),
-
-          const SizedBox(height: 20),
-
-          // Status items - populated from backend
-          _buildStatusItem('This Week', thisWeekReports, const Color(0xFF10B981)),
-          const SizedBox(height: 12),
-          _buildStatusItem('Avg Response', avgResponse, const Color(0xFF3B82F6)),
-          const SizedBox(height: 12),
-          _buildStatusItem('Safety Level', safetyLevel, const Color(0xFF10B981)),
-        ],
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Text(
+                  'Community Status',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF36599F),
+                  ),
+                ),
+                const Spacer(),
+                Icon(
+                  Icons.arrow_forward_ios,
+                  size: 16,
+                  color: Colors.grey[400],
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            _buildStatusItem('This Week', thisWeekReports, const Color(0xFF10B981)),
+            const SizedBox(height: 12),
+            _buildStatusItem('Avg Response', avgResponse, const Color(0xFF3B82F6)),
+            const SizedBox(height: 12),
+            _buildStatusItem('Safety Level', safetyLevel, const Color(0xFF10B981)),
+            const SizedBox(height: 15),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFF36599F).withOpacity(0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.bar_chart, size: 16, color: Color(0xFF36599F)),
+                  SizedBox(width: 6),
+                  Text(
+                    'Tap for detailed statistics',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: Color(0xFF36599F),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -301,6 +298,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 
+  // ENHANCED - Added My Impact card
   Widget _buildQuickActions() {
     return Container(
       margin: const EdgeInsets.fromLTRB(30, 25, 30, 0),
@@ -315,9 +313,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
               color: Color(0xFF36599F),
             ),
           ),
-
           const SizedBox(height: 20),
 
+          // First Row
           Row(
             children: [
               Expanded(
@@ -355,6 +353,47 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ],
           ),
+
+          const SizedBox(height: 20),
+
+          // Second Row - NEW My Impact Card
+          Row(
+            children: [
+              Expanded(
+                child: _buildActionCard(
+                  icon: Icons.emoji_events,
+                  title: 'My Impact',
+                  subtitle: 'View contributions',
+                  color: const Color(0xFFFFA500),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const MyImpactScreen(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              const SizedBox(width: 20),
+              Expanded(
+                child: _buildActionCard(
+                  icon: Icons.school,
+                  title: 'Learn',
+                  subtitle: 'Safety tips',
+                  color: const Color(0xFF8B5CF6),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const SafetyEducationScreen(),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -385,14 +424,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(
-              icon,
-              color: color,
-              size: 32,
-            ),
-
+            Icon(icon, color: color, size: 32),
             const SizedBox(height: 15),
-
             Text(
               title,
               style: const TextStyle(
@@ -401,9 +434,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 color: Color(0xFF36599F),
               ),
             ),
-
             const SizedBox(height: 5),
-
             Text(
               subtitle,
               style: TextStyle(
@@ -411,6 +442,84 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 color: color,
                 fontWeight: FontWeight.w500,
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // NEW - Nearby Incidents Card
+  Widget _buildNearbyIncidentsCard() {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const NearbyIncidentsScreen(),
+          ),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.fromLTRB(30, 25, 30, 0),
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [Color(0xFFFEF3C7), Color(0xFFFDE68A)],
+          ),
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.orange.withOpacity(0.15),
+              blurRadius: 10,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 50,
+              height: 50,
+              decoration: BoxDecoration(
+                color: const Color(0xFFF59E0B),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(
+                Icons.notifications_active,
+                color: Colors.white,
+                size: 28,
+              ),
+            ),
+            const SizedBox(width: 15),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Nearby Incidents',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: Color(0xFF92400E),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '$nearbyIncidentsCount active alerts in your area',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Color(0xFFB45309),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Icon(
+              Icons.arrow_forward_ios,
+              size: 20,
+              color: Colors.brown[700],
             ),
           ],
         ),
@@ -426,11 +535,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         children: [
           Row(
             children: [
-              const Icon(
-                Icons.location_city,
-                color: Color(0xFF36599F),
-                size: 22,
-              ),
+              const Icon(Icons.location_city, color: Color(0xFF36599F), size: 22),
               const SizedBox(width: 10),
               const Text(
                 'Your Watch Groups',
@@ -442,10 +547,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ],
           ),
-
           const SizedBox(height: 15),
-
-          // Watch group info - populated from backend
           Text(
             watchGroupInfo,
             style: TextStyle(
@@ -454,9 +556,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               fontWeight: FontWeight.w500,
             ),
           ),
-
           const SizedBox(height: 20),
-
           SizedBox(
             width: double.infinity,
             height: 45,
@@ -478,10 +578,74 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
               child: const Text(
                 'View Groups',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // NEW - Safety Education Card
+  Widget _buildSafetyEducationCard() {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(30, 25, 30, 0),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: const Color(0xFFEDE9FE),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: const Color(0xFF8B5CF6).withOpacity(0.3)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 50,
+            height: 50,
+            decoration: BoxDecoration(
+              color: const Color(0xFF8B5CF6),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(Icons.school, color: Colors.white, size: 28),
+          ),
+          const SizedBox(width: 15),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'Safety Education',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: Color(0xFF6B21A8),
+                  ),
                 ),
+                const SizedBox(height: 4),
+                Text(
+                  'Learn responsible reporting',
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: Colors.purple[800],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const SafetyEducationScreen(),
+                ),
+              );
+            },
+            child: const Text(
+              'Learn',
+              style: TextStyle(
+                color: Color(0xFF8B5CF6),
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
@@ -508,41 +672,27 @@ class _DashboardScreenState extends State<DashboardScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _buildNavItem(Icons.home, 'Home', 0, true, () {
-            setState(() {
-              _selectedIndex = 0;
-            });
+            setState(() => _selectedIndex = 0);
           }),
           _buildNavItem(Icons.description, 'Reports', 1, false, () {
-            setState(() {
-              _selectedIndex = 1;
-            });
+            setState(() => _selectedIndex = 1);
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => const MyReportsScreen(),
-              ),
+              MaterialPageRoute(builder: (context) => const MyReportsScreen()),
             );
           }),
           _buildNavItem(Icons.message, 'Messages', 2, false, () {
-            setState(() {
-              _selectedIndex = 2;
-            });
+            setState(() => _selectedIndex = 2);
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => const MessagesScreen(),
-              ),
+              MaterialPageRoute(builder: (context) => const MessagesScreen()),
             );
           }),
           _buildNavItem(Icons.person, 'Profile', 3, false, () {
-            setState(() {
-              _selectedIndex = 3;
-            });
+            setState(() => _selectedIndex = 3);
             Navigator.push(
               context,
-              MaterialPageRoute(
-                builder: (context) => const ProfileScreen(),
-              ),
+              MaterialPageRoute(builder: (context) => const ProfileScreen()),
             );
           }),
         ],
