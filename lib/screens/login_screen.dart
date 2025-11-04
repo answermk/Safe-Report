@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
 import 'forgot_password_screen.dart';
 import 'signup_screen.dart';
+import 'dashboard_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -16,12 +16,77 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
   bool _obscurePassword = true;
   bool _rememberMe = false;
+  
+  // Hardcoded sample credentials for testing
+  static const String sampleEmail = 'test@safereport.com';
+  static const String samplePassword = 'SafeReport123';
+  
+  // Alternative test accounts
+  static const Map<String, String> testAccounts = {
+    'admin@safereport.com': 'Admin@2024',
+    'user@safereport.com': 'User@2024',
+    'demo@safereport.com': 'Demo@2024',
+  };
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
+  }
+
+  void _handleLogin() {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text;
+
+    // Validate empty fields
+    if (email.isEmpty || password.isEmpty) {
+      _showMessage('Please enter both email and password', isError: true);
+      return;
+    }
+
+    // Check against hardcoded test accounts
+    if (email == sampleEmail && password == samplePassword) {
+      print('✓ Login successful: $email');
+      print('✓ Remember me: $_rememberMe');
+      _showMessage('Login successful! Welcome to SafeReport', isError: false);
+      
+      // Navigate to dashboard after a short delay for the snackbar to show
+      Future.delayed(const Duration(milliseconds: 500), () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const DashboardScreen()),
+        );
+      });
+    } else if (testAccounts.containsKey(email) && testAccounts[email] == password) {
+      print('✓ Login successful: $email');
+      print('✓ Remember me: $_rememberMe');
+      _showMessage('Login successful! Welcome to SafeReport', isError: false);
+      
+      // Navigate to dashboard after a short delay for the snackbar to show
+      Future.delayed(const Duration(milliseconds: 500), () {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const DashboardScreen()),
+        );
+      });
+    } else {
+      _showMessage('Invalid email or password. Try sample credentials.', isError: true);
+      print('✗ Login failed for: $email');
+    }
+  }
+
+  void _showMessage(String message, {required bool isError}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: isError ? Colors.red : Colors.green,
+        behavior: SnackBarBehavior.floating,
+        margin: const EdgeInsets.all(16),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        duration: const Duration(seconds: 3),
+      ),
+    );
   }
 
   Future<void> _launchGoogleSignIn() async {
@@ -131,21 +196,54 @@ class _LoginScreenState extends State<LoginScreen> {
                     ],
                   ),
 
-                  const SizedBox(height: 30),
+                  const SizedBox(height: 20),
+
+                  // Sample credentials info
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Color(0xFF36599F).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Color(0xFF36599F).withOpacity(0.3)),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.info_outline, size: 16, color: Color(0xFF36599F)),
+                            SizedBox(width: 6),
+                            Text(
+                              'Test Credentials',
+                              style: TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: Color(0xFF36599F),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 8),
+                        Text(
+                          'Email: test@safereport.com\nPassword: SafeReport123',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.black87,
+                            height: 1.4,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 20),
 
                   // Login button
                   SizedBox(
                     width: double.infinity,
                     height: 50,
                     child: ElevatedButton(
-                      onPressed: () {
-                        // Handle login - backend functionality
-                        print('Login button pressed');
-                        print('Email: ${_emailController.text}');
-                        print('Password: ${_passwordController.text}');
-                        print('Remember me: $_rememberMe');
-                        // TODO: Implement actual login logic with backend
-                      },
+                      onPressed: _handleLogin,
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFF36599F),
                         foregroundColor: Colors.white,
@@ -274,15 +372,17 @@ class _LoginScreenState extends State<LoginScreen> {
                               ],
                             ),
                             child: Center(
-                              child: Container(
+                              child: Image.network(
+                                'https://cdn-icons-png.flaticon.com/512/2991/2991148.png',
                                 width: 24,
                                 height: 24,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(2),
-                                ),
-                                child: CustomPaint(
-                                  painter: GoogleLogoPainter(),
-                                ),
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Icon(
+                                    Icons.g_mobiledata,
+                                    size: 24,
+                                    color: Color(0xFF4285F4),
+                                  );
+                                },
                               ),
                             ),
                           ),
@@ -532,35 +632,3 @@ class BottomWavePainter extends CustomPainter {
   bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
 
-class GoogleLogoPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()..style = PaintingStyle.fill;
-
-    // Draw simplified Google "G" logo
-    final rect = Rect.fromLTWH(0, 0, size.width, size.height);
-
-    // Blue section
-    paint.color = Color(0xFF4285F4);
-    canvas.drawArc(rect, -math.pi / 2, math.pi, false, paint);
-
-    // Red section
-    paint.color = Color(0xFFDB4437);
-    canvas.drawArc(rect, math.pi / 2, math.pi / 2, false, paint);
-
-    // Yellow section
-    paint.color = Color(0xFFF4B400);
-    canvas.drawArc(rect, math.pi, math.pi / 2, false, paint);
-
-    // Green section
-    paint.color = Color(0xFF0F9D58);
-    canvas.drawArc(rect, -math.pi / 2, -math.pi / 2, false, paint);
-
-    // White center
-    paint.color = Colors.white;
-    canvas.drawCircle(Offset(size.width / 2, size.height / 2), size.width / 4, paint);
-  }
-
-  @override
-  bool shouldRepaint(CustomPainter oldDelegate) => false;
-}

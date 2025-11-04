@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:safereport_mobo/screens/offline_reports_queue_screen.dart';
+import 'anonymous_reporting_info_screen.dart';
+//import 'offline_reports_queue_screen.dart';
+import 'my_impact_screen.dart';
 
 class AccountSettingsScreen extends StatefulWidget {
   const AccountSettingsScreen({Key? key}) : super(key: key);
@@ -23,6 +27,8 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
       appBar: AppBar(
         leading: const BackButton(),
         title: const Text('Account Settings', style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: const Color(0xFF36599F),
+        foregroundColor: Colors.white,
         bottom: const PreferredSize(
           preferredSize: Size.fromHeight(24),
           child: Padding(
@@ -42,6 +48,11 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            // Quick Access Cards Section
+            _buildQuickAccessSection(),
+            const SizedBox(height: 24),
+
+            // Security Settings
             _buildSection(
               icon: Icons.security,
               title: 'Security Settings',
@@ -51,27 +62,33 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
+                      const Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
-                        children: const [
+                        children: [
                           Text('Change Password', style: TextStyle(fontWeight: FontWeight.bold)),
                           SizedBox(height: 2),
                           Text('Last changed 30 days ago', style: TextStyle(fontSize: 12, color: Colors.grey)),
                         ],
                       ),
                       ElevatedButton(
-                        onPressed: () {},
-                        child: const Text('Update'),
-                        style: ElevatedButton.styleFrom(minimumSize: Size(70, 36)),
+                        onPressed: () {
+                          _showChangePasswordDialog();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: const Size(70, 36),
+                          backgroundColor: const Color(0xFF36599F),
+                        ),
+                        child: const Text('Update', style: TextStyle(color: Colors.white)),
                       ),
                     ],
                   ),
                   const SizedBox(height: 12),
                   SwitchListTile(
                     contentPadding: EdgeInsets.zero,
-                    title: const Text('Two- Factor Authentication', style: TextStyle(fontWeight: FontWeight.bold)),
+                    title: const Text('Two-Factor Authentication', style: TextStyle(fontWeight: FontWeight.bold)),
                     subtitle: const Text('Add extra security to your account'),
                     value: twoFactorEnabled,
+                    activeColor: const Color(0xFF36599F),
                     onChanged: (val) => setState(() => twoFactorEnabled = val),
                   ),
                   SwitchListTile(
@@ -79,12 +96,15 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                     title: const Text('Biometric Login', style: TextStyle(fontWeight: FontWeight.bold)),
                     subtitle: const Text('Use fingerprint or face ID'),
                     value: biometricLogin,
+                    activeColor: const Color(0xFF36599F),
                     onChanged: (val) => setState(() => biometricLogin = val),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 16),
+
+            // Notifications Settings
             _buildSection(
               icon: Icons.notifications,
               title: 'Notifications Preferences',
@@ -95,6 +115,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                     title: const Text('Push Notifications', style: TextStyle(fontWeight: FontWeight.bold)),
                     subtitle: const Text('Report updates and alerts'),
                     value: pushNotifications,
+                    activeColor: const Color(0xFF36599F),
                     onChanged: (val) => setState(() => pushNotifications = val),
                   ),
                   SwitchListTile(
@@ -102,6 +123,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                     title: const Text('Email Updates', style: TextStyle(fontWeight: FontWeight.bold)),
                     subtitle: const Text('Weekly community summary'),
                     value: emailUpdates,
+                    activeColor: const Color(0xFF36599F),
                     onChanged: (val) => setState(() => emailUpdates = val),
                   ),
                   SwitchListTile(
@@ -109,12 +131,15 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                     title: const Text('Watch Group Alerts', style: TextStyle(fontWeight: FontWeight.bold)),
                     subtitle: const Text('Messages from your groups'),
                     value: watchGroupAlerts,
+                    activeColor: const Color(0xFF36599F),
                     onChanged: (val) => setState(() => watchGroupAlerts = val),
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 16),
+
+            // Privacy Settings with Anonymous Reporting Link
             _buildSection(
               icon: Icons.privacy_tip,
               title: 'Privacy Settings',
@@ -125,6 +150,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                     title: const Text('Default Anonymous Mode', style: TextStyle(fontWeight: FontWeight.bold)),
                     subtitle: const Text('Always submit reports anonymously'),
                     value: anonymousMode,
+                    activeColor: const Color(0xFF36599F),
                     onChanged: (val) => setState(() => anonymousMode = val),
                   ),
                   SwitchListTile(
@@ -132,12 +158,31 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                     title: const Text('Location Sharing', style: TextStyle(fontWeight: FontWeight.bold)),
                     subtitle: const Text('Share precise location with reports'),
                     value: locationSharing,
+                    activeColor: const Color(0xFF36599F),
                     onChanged: (val) => setState(() => locationSharing = val),
+                  ),
+                  const Divider(),
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: const Icon(Icons.info_outline, color: Color(0xFF36599F)),
+                    title: const Text('Anonymous Reporting Guide', style: TextStyle(fontWeight: FontWeight.bold)),
+                    subtitle: const Text('Learn about privacy protections'),
+                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const AnonymousReportingInfoScreen(),
+                        ),
+                      );
+                    },
                   ),
                 ],
               ),
             ),
             const SizedBox(height: 16),
+
+            // Language Settings
             _buildSection(
               icon: Icons.language,
               title: 'Language Preferences',
@@ -146,12 +191,20 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                 children: [
                   const Text('App Language', style: TextStyle(fontWeight: FontWeight.bold)),
                   const SizedBox(height: 8),
-                  DropdownButton<String>(
+                  DropdownButtonFormField<String>(
                     value: appLanguage,
                     isExpanded: true,
+                    decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    ),
                     items: const [
                       DropdownMenuItem(value: 'English', child: Text('English')),
                       DropdownMenuItem(value: 'Spanish', child: Text('Spanish')),
+                      DropdownMenuItem(value: 'French', child: Text('French')),
+                      DropdownMenuItem(value: 'Kinyarwanda', child: Text('Kinyarwanda')),
                     ],
                     onChanged: (val) => setState(() => appLanguage = val ?? 'English'),
                   ),
@@ -159,13 +212,120 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               ),
             ),
             const SizedBox(height: 24),
+
+            // Save Button
             ElevatedButton(
-              onPressed: () {},
-              child: const Text('Save All Settings', style: TextStyle(color: Colors.white)),
+              onPressed: () {
+                _saveSettings();
+              },
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size.fromHeight(48),
                 textStyle: const TextStyle(fontWeight: FontWeight.bold),
-                backgroundColor: Color(0xFF36599F),
+                backgroundColor: const Color(0xFF36599F),
+              ),
+              child: const Text('Save All Settings', style: TextStyle(color: Colors.white)),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildQuickAccessSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Quick Access',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Color(0xFF36599F),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: _buildQuickAccessCard(
+                icon: Icons.cloud_queue,
+                title: 'Offline Queue',
+                subtitle: 'Pending reports',
+                color: Colors.orange,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const OfflineReportsQueueScreen(),
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: _buildQuickAccessCard(
+                icon: Icons.emoji_events,
+                title: 'My Impact',
+                subtitle: 'View stats',
+                color: Colors.amber,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const MyImpactScreen(),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildQuickAccessCard({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required Color color,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: color.withOpacity(0.3)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(icon, color: color, size: 32),
+            const SizedBox(height: 12),
+            Text(
+              title,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              subtitle,
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey[600],
               ),
             ),
           ],
@@ -178,6 +338,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
+        color: Colors.white,
         border: Border.all(color: Colors.grey.shade300),
         borderRadius: BorderRadius.circular(12),
       ),
@@ -186,14 +347,91 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
         children: [
           Row(
             children: [
-              Icon(icon, color: Colors.blue),
+              Icon(icon, color: const Color(0xFF36599F)),
               const SizedBox(width: 8),
-              Text(title, style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.blue)),
+              Text(title, style: const TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF36599F))),
             ],
           ),
           const SizedBox(height: 8),
           child,
         ],
+      ),
+    );
+  }
+
+  void _showChangePasswordDialog() {
+    final currentPasswordController = TextEditingController();
+    final newPasswordController = TextEditingController();
+    final confirmPasswordController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Change Password'),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                controller: currentPasswordController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: 'Current Password',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: newPasswordController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: 'New Password',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 12),
+              TextField(
+                controller: confirmPasswordController,
+                obscureText: true,
+                decoration: const InputDecoration(
+                  labelText: 'Confirm New Password',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // TODO: Implement password change logic
+              Navigator.pop(context);
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Password updated successfully'),
+                  backgroundColor: Colors.green,
+                ),
+              );
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: const Color(0xFF36599F)),
+            child: const Text('Update', style: TextStyle(color: Colors.white)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _saveSettings() {
+    // TODO: Implement backend save logic
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Settings saved successfully'),
+        backgroundColor: Colors.green,
+        duration: Duration(seconds: 2),
       ),
     );
   }

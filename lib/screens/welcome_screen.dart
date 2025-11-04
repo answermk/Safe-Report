@@ -13,215 +13,83 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SafeArea(
+      body: Stack(
+        children: [
+          // Main content
+          SafeArea(
         child: Column(
           children: [
-            // Top white section with illustration and phone mockup
+                // Top white section with illustration
             Expanded(
-              flex: 6,
+                  flex: 5,
               child: Container(
                 width: double.infinity,
                 color: Colors.white,
-                child: Stack(
-                  children: [
-                    // Curved background design
-                    Positioned(
-                      bottom: 0,
-                      left: 0,
-                      right: 0,
-                      child: Container(
-                        height: 150,
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              Colors.white,
-                              Color(0xFF5D80C1).withOpacity(0.1),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    // Main illustration content
-                    Center(
+                    child: Center(
                       child: Padding(
-                        padding: const EdgeInsets.all(40.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            // Person illustration (simplified representation)
-                            Container(
-                              width: 80,
-                              height: 120,
-                              margin: EdgeInsets.only(right: 40),
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        child: Image.network(
+                          'https://cdn-icons-png.flaticon.com/512/9305/9305665.png',
+                          height: 280,
+                          fit: BoxFit.contain,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Container(
+                              height: 280,
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  value: loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded /
+                                          loadingProgress.expectedTotalBytes!
+                                      : null,
+                                  color: Color(0xFF36599F),
+                                ),
+                              ),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container(
+                              height: 280,
+                              width: 280,
+                              decoration: BoxDecoration(
+                                color: Colors.grey[100],
+                                borderRadius: BorderRadius.circular(20),
+                              ),
                               child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  // Head
-                                  Container(
-                                    width: 25,
-                                    height: 25,
-                                    decoration: BoxDecoration(
-                                      color: Color(0xFFFFDBD1),
-                                      shape: BoxShape.circle,
-                                    ),
-                                  ),
-                                  SizedBox(height: 5),
-                                  // Body
-                                  Container(
-                                    width: 40,
-                                    height: 35,
-                                    decoration: BoxDecoration(
-                                      color: Color(0xFFE5E5E5),
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                  ),
-                                  SizedBox(height: 5),
-                                  // Legs
-                                  Container(
-                                    width: 35,
-                                    height: 50,
-                                    decoration: BoxDecoration(
-                                      color: Color(0xFF2C3E50),
-                                      borderRadius: BorderRadius.circular(15),
+                                  Icon(Icons.live_tv, size: 80, color: Color(0xFF36599F)),
+                                  SizedBox(height: 10),
+                                  Text(
+                                    'LIVE',
+                                    style: TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFF36599F),
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
-                            // Phone mockup
-                            Container(
-                              width: 140,
-                              height: 280,
-                              decoration: BoxDecoration(
-                                color: Colors.black,
-                                borderRadius: BorderRadius.circular(25),
-                                border: Border.all(color: Colors.black, width: 3),
-                              ),
-                              child: Container(
-                                margin: EdgeInsets.all(3),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(22),
-                                ),
-                                child: Column(
-                                  children: [
-                                    // Notch
-                                    Container(
-                                      width: 50,
-                                      height: 20,
-                                      margin: EdgeInsets.only(top: 8),
-                                      decoration: BoxDecoration(
-                                        color: Colors.black,
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                    ),
-                                    // Status indicators
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                                      child: Row(
-                                        children: [
-                                          Container(
-                                            width: 8,
-                                            height: 8,
-                                            decoration: BoxDecoration(
-                                              color: Color(0xFF5D80C1),
-                                              shape: BoxShape.circle,
-                                            ),
-                                          ),
-                                          Spacer(),
-                                        ],
-                                      ),
-                                    ),
-                                    // Blue section
-                                    Container(
-                                      width: double.infinity,
-                                      height: 60,
-                                      margin: EdgeInsets.symmetric(horizontal: 15),
-                                      decoration: BoxDecoration(
-                                        color: Color(0xFF5D80C1),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                    ),
-                                    SizedBox(height: 10),
-                                    // Content lines
-                                    Padding(
-                                      padding: EdgeInsets.symmetric(horizontal: 15),
-                                      child: Column(
-                                        children: [
-                                          Container(
-                                            width: double.infinity,
-                                            height: 8,
-                                            decoration: BoxDecoration(
-                                              color: Color(0xFFE5E5E5),
-                                              borderRadius: BorderRadius.circular(4),
-                                            ),
-                                          ),
-                                          SizedBox(height: 8),
-                                          Container(
-                                            width: double.infinity,
-                                            height: 8,
-                                            decoration: BoxDecoration(
-                                              color: Color(0xFFE5E5E5),
-                                              borderRadius: BorderRadius.circular(4),
-                                            ),
-                                          ),
-                                          SizedBox(height: 8),
-                                          Row(
-                                            children: [
-                                              Container(
-                                                width: 30,
-                                                height: 8,
-                                                decoration: BoxDecoration(
-                                                  color: Color(0xFF5D80C1),
-                                                  borderRadius: BorderRadius.circular(4),
-                                                ),
-                                              ),
-                                              SizedBox(width: 10),
-                                              Container(
-                                                width: 60,
-                                                height: 8,
-                                                decoration: BoxDecoration(
-                                                  color: Color(0xFFE5E5E5),
-                                                  borderRadius: BorderRadius.circular(4),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
+                            );
+                          },
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            // Bottom blue section with content
+                                ),
+                              ),
+                            ),
+                // Bottom blue section with wavy background
             Expanded(
-              flex: 4,
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [Color(0xFF5D80C1), Color(0xFF36599F)],
-                  ),
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(40),
-                    topRight: Radius.circular(40),
-                  ),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(40, 50, 40, 40),
+                  flex: 5,
+                  child: Stack(
+                    children: [
+                      // Blue wavy background
+                      CustomPaint(
+                        size: Size(double.infinity, double.infinity),
+                        painter: WelcomeWavePainter(),
+                      ),
+                      // Content
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(30, 60, 30, 40),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -235,14 +103,14 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           letterSpacing: -0.5,
                         ),
                       ),
-                      SizedBox(height: 30),
+                            SizedBox(height: 25),
                       // Description
                       Text(
                         'A Real-Time Crime Prevention Platform uses smart technology to detect and respond to crime instantly, helping keep communities safe through quick alerts and data-driven actions.',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.white.withOpacity(0.9),
+                                fontSize: 15,
+                                color: Colors.white.withOpacity(0.95),
                           height: 1.6,
                           fontWeight: FontWeight.w400,
                         ),
@@ -251,7 +119,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       // Get Started Button
                       Container(
                         width: double.infinity,
-                        height: 56,
+                              height: 54,
                         child: ElevatedButton(
                           onPressed: () {
                             Navigator.push(
@@ -265,7 +133,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                             backgroundColor: Colors.white,
                             foregroundColor: Color(0xFF36599F),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(28),
+                                    borderRadius: BorderRadius.circular(8),
                             ),
                             elevation: 0,
                             shadowColor: Colors.transparent,
@@ -282,11 +150,54 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     ],
                   ),
                 ),
+                    ],
               ),
             ),
           ],
         ),
+          ),
+        ],
       ),
     );
   }
+}
+
+// Custom painter for the wavy blue background
+class WelcomeWavePainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = Color(0xFF36599F)
+      ..style = PaintingStyle.fill;
+
+    final path = Path();
+    
+    // Start from top-left with a wave
+    path.moveTo(0, size.height * 0.15);
+    
+    // Create a smooth wave at the top
+    path.quadraticBezierTo(
+      size.width * 0.25,
+      size.height * 0.05,
+      size.width * 0.5,
+      size.height * 0.10,
+    );
+    
+    path.quadraticBezierTo(
+      size.width * 0.75,
+      size.height * 0.15,
+      size.width,
+      size.height * 0.05,
+    );
+    
+    // Complete the path
+    path.lineTo(size.width, size.height);
+    path.lineTo(0, size.height);
+    path.close();
+
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
 }
